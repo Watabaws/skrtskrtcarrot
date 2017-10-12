@@ -5,8 +5,17 @@
 	</head>
 	<body>
 		<center>
+			<h3>
+			{% with messages = get_flashed_messages() %}
+			  {% if messages %}
+			    {% for message in messages %}
+			      Your {{ message }} was bad!
+			    {% endfor %}
+			  {% endif %}
+			{% endwith %}
+			</h3>
 			<form action = "/loggit">
-				<h2>Welcome, please login below.</h2> 
+				<h2>Welcome, please login below.</h2>
 				Username: <input type = "text" name = "user">
 				<br>
 				Password: <input type = "password" name = "passo">
