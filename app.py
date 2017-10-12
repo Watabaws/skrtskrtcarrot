@@ -1,4 +1,4 @@
-from flask import Flask, session, url_for, redirect, render_template, request
+from flask import Flask, session, url_for, redirect, render_template, request, flash
 
 import os
 
@@ -8,17 +8,17 @@ app.secret_key = os.urandom(32)
 
 @app.route("/")
 def landing():
-	print session;
+	#print session;
 	if "username" in session:
-		return redirect("loggedin") #if logged in u go to logged in page otherwise you have to log in first
+		return redirect("loggedin")
 	return render_template("loginpage.html")
 
 @app.route("/loggedin")
 def pullup():
-	print session;
-	print "WE MADE IT \n\n"
+	#print session;
+	#print "WE MADE IT \n\n"
 	if "username" in session:
-		return render_template("ushallpass.html", username = session["username"]) #if ur logged in this page is rendered
+		return render_template("ushallpass.html", username = session["username"])
 	else:
 		return redirect("/")
 
@@ -30,26 +30,25 @@ def logged(user = ""):
 	if user == "":
 		username = request.args["user"].lower()
 		password = request.args["passo"]
-		print "BOUTTA CHECK THAT USERNAME \n\n"
+	#	print "BOUTTA CHECK THAT USERNAME \n\n"
 		if username == "skrt":
-			print "THE USERNAME HAS BEEN VALIDATED \n\n"
+			#print "THE USERNAME HAS BEEN VALIDATED \n\n"
 			if password == "Carrot":
-				print "THE PASSWORD HAS BEEN VALIDATED \n\n"
+				#print "THE PASSWORD HAS BEEN VALIDATED \n\n"
 				session["username"] = "skrt"
-				print "Does we makes it?\n\n"
-				return redirect("/loggedin") #actually logged in
+				#print "Does we makes it?\n\n"
+				return redirect("/loggedin")
 			else:
-				return redirect(url_for("u_messed_up", err="password")) #redirects to u_messed_up which tells you error of log in which happens to be wrong password
+				flash("password")
+				return redirect(url_for("landing"))
 		else:
-			return redirect(url_for("u_messed_up()", err="username")) #redirects to u_messed_up which tells you error of log in which happens to be wrong username
+			flash("username")
+			return redirect(url_for("landing"))
 
 	#If you already have a username, it brings you here
 	else:
 		return render_template("ushallpass.html", username = session["username"])
 
-@app.route("/wrong")
-def u_messed_up():
-    return render_template("errorpage.html", bad = request.args.get("err")) #returns the error you made >:(
 
 if __name__ == "__main__":
     app.debug = True
